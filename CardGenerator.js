@@ -2,7 +2,7 @@
 
 (function (){
 
-	function cardGenerator(){
+	function cardGenerator(callback){
 
 		var Basic = require("./BasicCard")
 		var Cloze = require("./ClozeCard")
@@ -14,17 +14,12 @@
 
 		var pickPres = Math.ceil(Math.random()*45);
 
-		// cardGenerator();
-
-		cardBack = fs.readFile("presidents.txt", "utf8", function(err,data){
+		fs.readFile("presidents.txt", "utf8", function(err,data){
 			if(err) {return console.log(err);}
 
 			var presArray = JSON.parse(data)
-
-			console.log("cB check")
 			
-			return presArray[pickPres - 1];
-		}).then(function(){
+			cardBack = presArray[pickPres - 1];
 
 			switch(pickPres){
 				case 1:
@@ -54,13 +49,11 @@
 				flashCard = new Basic.Card(`Who is the ${presPlace} president of the United States?`, cardBack)
 			} else {
 				flashCard = new Cloze.Card(`${cardBack} is the ${presPlace} president of the United States?`, cardBack)
+
 			}
 
-			console.log(flashCard.front)
-			return flashCard;
+			callback(flashCard)
 		})
-			// console.log(flashCard.front)
-			// return flashCard;
 	}
 
 	module.exports = {

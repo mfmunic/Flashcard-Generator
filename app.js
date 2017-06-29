@@ -2,8 +2,8 @@
 
 (function (){
 
-	var generate = require("./CardGenerator2")
-	// var generate = require("./CardGenerator")
+	// var generate = require("./CardGenerator2")
+	var generate = require("./CardGenerator")
 	var stdin = process.openStdin();
 
 	var reCard
@@ -53,8 +53,7 @@
 			case "score":
 
 				scored()
-				break
-
+				break;
 
 		}//end switch
 	}//end gameloop
@@ -81,37 +80,56 @@
 
 	function ask (){
 		console.log("----------------------------------------");
-		reCard = generate.card()
-		state = "answer"
+		generate.card(function(flashcard){
+			reCard = flashcard
+			console.log(reCard.front)
+			state = "answer"
+		})
+		
 	}
 
 	function answer (userInput){
 
-		var userAns = userInput.split(" ")
-		var check = reCard.back.trim().toLowerCase()
-		var back = reCard.back
+		var userAns = userInput.split(" ");
+		var check = reCard.back.trim().toLowerCase();
+		var checkEach = check.split(" ")
+		var back = reCard.back;
 
-			if (userAns.length == 1){
-				if(check.includes(userAns[0])){
+			if (userAns[0].length == 0){
+
+				console.log("Are you paying attention?")
+				state = "ask";
+				gameLoop();
+
+			} else if (userAns.length == 1){
+
+				if(checkEach.includes(userAns[0])){
 					console.log("Correct.");
 					score++;
 				} else {
-					console.log("Wrong!")
+					console.log("Wrong.")
 				}
+
+				state = "score";
+				gameLoop();
+
 			} else if (userAns.length == 2){
+
 				if (userInput === check){
 					console.log("Correct!")
 					score += 2;
 				} else {
 					console.log("Wrong!")
 				}
-			} else {
+
+				state = "score";
+				gameLoop();
+
+			} else if (userAns.length > 2) {
 				console.log("Please first and/or last name ONLY!");
+				state = "ask";
 				gameLoop();
 			}
-
-		state = "score"
-		gameLoop();
 	}
 
 	function ready (){
